@@ -33,10 +33,6 @@ namespace mpad
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(mpadMain));
-            Bunifu.UI.WinForms.BunifuTextBox.StateProperties stateProperties9 = new Bunifu.UI.WinForms.BunifuTextBox.StateProperties();
-            Bunifu.UI.WinForms.BunifuTextBox.StateProperties stateProperties10 = new Bunifu.UI.WinForms.BunifuTextBox.StateProperties();
-            Bunifu.UI.WinForms.BunifuTextBox.StateProperties stateProperties11 = new Bunifu.UI.WinForms.BunifuTextBox.StateProperties();
-            Bunifu.UI.WinForms.BunifuTextBox.StateProperties stateProperties12 = new Bunifu.UI.WinForms.BunifuTextBox.StateProperties();
             this.mnuOptions = new System.Windows.Forms.MenuStrip();
             this.mnuFile = new System.Windows.Forms.ToolStripMenuItem();
             this.fiNew = new System.Windows.Forms.ToolStripMenuItem();
@@ -79,7 +75,7 @@ namespace mpad
             this.heNotes = new System.Windows.Forms.ToolStripMenuItem();
             this.heSeperator1 = new System.Windows.Forms.ToolStripSeparator();
             this.heAbout = new System.Windows.Forms.ToolStripMenuItem();
-            this.txtMain = new Bunifu.UI.WinForms.BunifuTextBox();
+            this.txtMain = new Guna.UI2.WinForms.Guna2TextBox();
             this.mnuOptions.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -102,6 +98,7 @@ namespace mpad
             this.mnuOptions.Padding = new System.Windows.Forms.Padding(6, 0, 0, 0);
             this.mnuOptions.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
             this.mnuOptions.Size = new System.Drawing.Size(800, 19);
+            this.mnuOptions.Stretch = false;
             this.mnuOptions.TabIndex = 0;
             // 
             // mnuFile
@@ -319,7 +316,7 @@ namespace mpad
             // seSelectAll
             // 
             this.seSelectAll.Name = "seSelectAll";
-            this.seSelectAll.Size = new System.Drawing.Size(180, 22);
+            this.seSelectAll.Size = new System.Drawing.Size(122, 22);
             this.seSelectAll.Text = "Select All";
             this.seSelectAll.Click += new System.EventHandler(this.seSelectAll_Click);
             // 
@@ -377,12 +374,14 @@ namespace mpad
             this.thLight.Name = "thLight";
             this.thLight.Size = new System.Drawing.Size(101, 22);
             this.thLight.Text = "Light";
+            this.thLight.Click += new System.EventHandler(this.thLight_Click);
             // 
             // thDark
             // 
             this.thDark.Name = "thDark";
             this.thDark.Size = new System.Drawing.Size(101, 22);
             this.thDark.Text = "Dark";
+            this.thDark.Click += new System.EventHandler(this.thDark_Click);
             // 
             // mnuHelp
             // 
@@ -427,76 +426,39 @@ namespace mpad
             this.txtMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtMain.AnimationSpeed = 200;
-            this.txtMain.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.None;
-            this.txtMain.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.None;
+            this.txtMain.Animated = true;
+            this.txtMain.AutoScroll = true;
             this.txtMain.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.txtMain.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("txtMain.BackgroundImage")));
-            this.txtMain.BorderColorActive = System.Drawing.Color.DodgerBlue;
-            this.txtMain.BorderColorDisabled = System.Drawing.SystemColors.ControlLightLight;
-            this.txtMain.BorderColorHover = System.Drawing.Color.FromArgb(((int)(((byte)(105)))), ((int)(((byte)(181)))), ((int)(((byte)(255)))));
-            this.txtMain.BorderColorIdle = System.Drawing.Color.DarkGray;
+            this.txtMain.BorderColor = System.Drawing.Color.DimGray;
             this.txtMain.BorderRadius = 1;
-            this.txtMain.BorderThickness = 1;
-            this.txtMain.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtMain.BorderThickness = 0;
             this.txtMain.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.txtMain.DefaultFont = new System.Drawing.Font("Segoe UI", 9.25F);
             this.txtMain.DefaultText = "";
-            this.txtMain.FillColor = System.Drawing.SystemColors.ControlLightLight;
-            this.txtMain.HideSelection = true;
-            this.txtMain.IconLeft = null;
-            this.txtMain.IconLeftCursor = System.Windows.Forms.Cursors.IBeam;
-            this.txtMain.IconPadding = 0;
-            this.txtMain.IconRight = null;
-            this.txtMain.IconRightCursor = System.Windows.Forms.Cursors.IBeam;
-            this.txtMain.Lines = new string[0];
+            this.txtMain.DisabledState.BorderColor = System.Drawing.Color.Transparent;
+            this.txtMain.DisabledState.FillColor = System.Drawing.Color.Transparent;
+            this.txtMain.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(138)))), ((int)(((byte)(138)))));
+            this.txtMain.DisabledState.Parent = this.txtMain;
+            this.txtMain.DisabledState.PlaceholderForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(138)))), ((int)(((byte)(138)))));
+            this.txtMain.FocusedState.BorderColor = System.Drawing.Color.DimGray;
+            this.txtMain.FocusedState.Parent = this.txtMain;
+            this.txtMain.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.txtMain.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.txtMain.HoverState.BorderColor = System.Drawing.SystemColors.ButtonShadow;
+            this.txtMain.HoverState.Parent = this.txtMain;
+            this.txtMain.IconLeftSize = new System.Drawing.Size(0, 0);
+            this.txtMain.IconRightSize = new System.Drawing.Size(0, 0);
             this.txtMain.Location = new System.Drawing.Point(0, 19);
             this.txtMain.Margin = new System.Windows.Forms.Padding(0);
-            this.txtMain.MaxLength = 32767;
-            this.txtMain.MinimumSize = new System.Drawing.Size(1, 1);
-            this.txtMain.Modified = false;
+            this.txtMain.MaxLength = 99999999;
             this.txtMain.Multiline = true;
             this.txtMain.Name = "txtMain";
-            stateProperties9.BorderColor = System.Drawing.Color.DarkGray;
-            stateProperties9.FillColor = System.Drawing.Color.Empty;
-            stateProperties9.ForeColor = System.Drawing.Color.Empty;
-            stateProperties9.PlaceholderForeColor = System.Drawing.Color.Empty;
-            this.txtMain.OnActiveState = stateProperties9;
-            stateProperties10.BorderColor = System.Drawing.Color.Transparent;
-            stateProperties10.FillColor = System.Drawing.SystemColors.ControlLightLight;
-            stateProperties10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            stateProperties10.PlaceholderForeColor = System.Drawing.Color.DarkGray;
-            this.txtMain.OnDisabledState = stateProperties10;
-            stateProperties11.BorderColor = System.Drawing.Color.Transparent;
-            stateProperties11.FillColor = System.Drawing.Color.Empty;
-            stateProperties11.ForeColor = System.Drawing.Color.Empty;
-            stateProperties11.PlaceholderForeColor = System.Drawing.Color.Empty;
-            this.txtMain.OnHoverState = stateProperties11;
-            stateProperties12.BorderColor = System.Drawing.Color.DarkGray;
-            stateProperties12.FillColor = System.Drawing.SystemColors.ControlLightLight;
-            stateProperties12.ForeColor = System.Drawing.Color.Empty;
-            stateProperties12.PlaceholderForeColor = System.Drawing.Color.Empty;
-            this.txtMain.OnIdleState = stateProperties12;
-            this.txtMain.Padding = new System.Windows.Forms.Padding(3);
             this.txtMain.PasswordChar = '\0';
-            this.txtMain.PlaceholderForeColor = System.Drawing.Color.Silver;
-            this.txtMain.PlaceholderText = "Enter text here";
-            this.txtMain.ReadOnly = false;
-            this.txtMain.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.txtMain.PlaceholderText = "";
             this.txtMain.SelectedText = "";
-            this.txtMain.SelectionLength = 0;
-            this.txtMain.SelectionStart = 0;
-            this.txtMain.ShortcutsEnabled = true;
-            this.txtMain.Size = new System.Drawing.Size(800, 434);
-            this.txtMain.Style = Bunifu.UI.WinForms.BunifuTextBox._Style.Bunifu;
+            this.txtMain.ShadowDecoration.Parent = this.txtMain;
+            this.txtMain.Size = new System.Drawing.Size(800, 432);
             this.txtMain.TabIndex = 1;
-            this.txtMain.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            this.txtMain.TextMarginBottom = 0;
-            this.txtMain.TextMarginLeft = 0;
-            this.txtMain.TextMarginTop = -2;
-            this.txtMain.TextPlaceholder = "Enter text here";
-            this.txtMain.UseSystemPasswordChar = false;
-            this.txtMain.WordWrap = false;
+            this.txtMain.TextOffset = new System.Drawing.Point(-10, 0);
             this.txtMain.TextChanged += new System.EventHandler(this.updateContent);
             this.txtMain.KeyDown += new System.Windows.Forms.KeyEventHandler(this.keyDown);
             // 
@@ -505,6 +467,7 @@ namespace mpad
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
+            this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.txtMain);
             this.Controls.Add(this.mnuOptions);
@@ -561,11 +524,11 @@ namespace mpad
         private System.Windows.Forms.ToolStripMenuItem heNotes;
         private System.Windows.Forms.ToolStripSeparator heSeperator1;
         private System.Windows.Forms.ToolStripMenuItem heAbout;
-        private Bunifu.UI.WinForms.BunifuTextBox txtMain;
         private System.Windows.Forms.ToolStripMenuItem foWrap;
         private System.Windows.Forms.ToolStripMenuItem foFont;
         private System.Windows.Forms.ToolStripMenuItem fiNewWindow;
         private System.Windows.Forms.ToolStripMenuItem ASaveTimer;
+        private Guna.UI2.WinForms.Guna2TextBox txtMain;
     }
 }
 

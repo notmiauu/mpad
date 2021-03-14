@@ -1,25 +1,28 @@
-﻿using System;
+﻿using Guna.UI2.WinForms;
+using System;
 using System.Drawing;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Input;
+using static mpad.Keydowns;
 using static mpad.Settings;
+using static mpad.FileHandler;
+using static mpad.Save;
 using Clipboard = System.Windows.Forms.Clipboard;
 using Size = System.Drawing.Size;
+// ReSharper disable MethodHasAsyncOverload
 
 namespace mpad
 {
     public partial class mpadMain : Form
     {
-        private static readonly string EmergencyPath = Settings.configPath + @"\RecoveryFolder";
+        private static readonly string EmergencyPath = Settings.configPath + @"\Recovered Files";
 
         public static int newReturn;
         public static int currentTimer = 30000; //default
-        public static float defaultZoom = 9.25f;
-        public static float newZoom;
-        
+        private static float newZoom = impConfig.fontSize;
+
         public static string Theme = "Light"; //default
 
         public mpadMain()
@@ -34,6 +37,9 @@ namespace mpad
             set => base.MinimumSize = value;
         }
 
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// Form Load/Unload Events
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         private void mpadLoad(object sender, EventArgs e)
         {
             BeginInvoke((MethodInvoker)(() =>
@@ -41,10 +47,22 @@ namespace mpad
                currentTimer = impConfig.saveTimer;
                txtMain.WordWrap = impConfig.wrap;
                foWrap.Checked = impConfig.wrap;
-               txtMain.Font = new Font(impConfig.font, impConfig.zoom );
+               txtMain.Font = new Font(impConfig.font, impConfig.fontSize);
+
+               switch (impConfig.theme)
+               {
+                   case "Light":
+                       thLight.Checked = true;
+                       setTheme();
+                       break;
+                   case "Dark":
+                       thDark.Checked = true;
+                       setTheme();
+                       break;
+               }
            })); //Overwrites default
 
-            //Config to retrieve:  font, theme
+            //TopMost = false;
 
             Text = Data.filename + " - " + "mpad";
         }
@@ -53,17 +71,22 @@ namespace mpad
         {
             Confirmation closeConfirm = new Confirmation
             {
+                StartPosition = FormStartPosition.CenterParent,
                 Type = 2
             };
+
+            mpadJSON session = new mpadJSON { id = impConfig.id, theme = impConfig.theme, wrap = impConfig.wrap, font = impConfig.font, saveTimer = impConfig.saveTimer, fontSize = newZoom };
 
             switch (e.CloseReason)
             {
                 case CloseReason.WindowsShutDown when !Data.saved:
                 case CloseReason.None:
                 case CloseReason.ApplicationExitCall:
-                    EmergencyRecovery();
+                    SerializeConfig(session);
+                    EmergencyRecovery(txtMain, EmergencyPath);
                     break;
                 case CloseReason.UserClosing when Data.saved:
+                    SerializeConfig(session);
                     return;
                 case CloseReason.UserClosing:
                     closeConfirm.ShowDialog();
@@ -71,30 +94,33 @@ namespace mpad
                     switch (newReturn)
                     {
                         case 1:
-                            SaveFunc();
+                            SaveFunc(txtMain, this);
                             if (!Data.saved)
                             {
                                 e.Cancel = true;
                             }
+                            else SerializeConfig(session);
+
                             newReturn = 0;
                             break;
                         case 2:
+                            SerializeConfig(session);
                             e.Cancel = false;
-                            newReturn = 0;
                             break;
                         case 3:
                             e.Cancel = true;
                             newReturn = 0;
                             break;
                     }
+
                     break;
                 case CloseReason.WindowsShutDown when Data.path != "":
                     {
+                        SerializeConfig(session);
                         using (StreamWriter sw = new StreamWriter(Data.path))
                         {
                             sw.Write(txtMain.Text);
                         }
-
                         break;
                     }
                 default:
@@ -104,26 +130,30 @@ namespace mpad
         }
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// Events (+ KeyDown)
+        /// Events
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// Textbox Events (+ KeyDown)
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         private void updateContent(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(txtMain.Text)) return;
             Data.saved = false;
             Scheduler.Update(txtMain.Text);
-            Text = "* " + Data.path + " - " + "mpad";
-
-            //Data.filename
+            Text = "* " + Data.filename + " - " + "mpad";
         }
 
-        private void keyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        private void keyDown(object sender, KeyEventArgs e)
         {
-            if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.S) ||
-                Keyboard.IsKeyDown(Key.RightCtrl) && Keyboard.IsKeyDown(Key.S)) SaveFunc();
-            if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.O) ||
-                Keyboard.IsKeyDown(Key.RightCtrl) && Keyboard.IsKeyDown(Key.O)) OpenFunc();
-            if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.N) ||
-                Keyboard.IsKeyDown(Key.RightCtrl) && Keyboard.IsKeyDown(Key.N)) newFileFunc();
+            if (save_keyDown()) SaveFunc(txtMain, this);;
+            if (open_keyDown()) OpenFunc();
+            if (new_keyDown()) newFileFunc();
+            if (autoSave_keyDown()) AutoSaveEnable();
+            if (themeSet_keyDown()) openSetTheme();
+            if (zoomIn_keyDown()) zoomIn();
+
+            //sirhurt verified
         }
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -136,21 +166,16 @@ namespace mpad
 
         private void newFileFunc()
         {
-            var newConfirm = new Confirmation
-            {
-                Type = 1
-            };
+            var newConfirm = new Confirmation { StartPosition = FormStartPosition.CenterParent, Type = 1 };
 
             if (!Data.saved)
             {
                 newConfirm.ShowDialog();
-
                 if (newReturn == 1) txtMain.Text = string.Empty;
+                Text = "Untitled" + " - " + "mpad";
+                Data.path = "";
             }
-            else
-            {
-                txtMain.Text = string.Empty;
-            }
+            else txtMain.Text = string.Empty;
 
             newReturn = 0;
         }
@@ -185,36 +210,7 @@ namespace mpad
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         private void fiSave_Click(object sender, EventArgs e)
         {
-            SaveFunc();
-        }
-
-        private void SaveFunc()
-        {
-            switch (Data.saved)
-            {
-                case false when Data.path == "":
-                case false when !File.Exists(Data.path):
-                    Scheduler.Save(txtMain.Text);
-                    Text = Data.filename + " - " + "mpad";
-                    break;
-                case false when File.Exists(Data.path):
-                    try
-                    {
-                        using (StreamWriter sw = new StreamWriter(Data.path))
-                        {
-                            sw.Write(txtMain.Text);
-                            MessageBox.Show("Your work has been saved.");
-                        }
-
-                        Text = Data.filename + " - " + "mpad";
-                    }
-                    catch (Exception)
-                    {
-                        MessageBox.Show("Error saving the file, fix this please Miau.");
-                    }
-
-                    break;
-            }
+            SaveFunc(txtMain, this);
         }
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -231,6 +227,11 @@ namespace mpad
         /// AUTO-SAVE
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         private void fiAutoSave_Click(object sender, EventArgs e)
+        {
+            AutoSaveEnable();
+        }
+
+        private void AutoSaveEnable()
         {
             bool check = File.Exists(Data.path);
 
@@ -258,12 +259,10 @@ namespace mpad
 
         private async void AutoSaveFunc()
         {
-            int totalTimer;
-            totalTimer = 0;
+            int totalTimer = 0;
             const int intervalTimer = 30000;
 
-            CancellationTokenSource ct = new CancellationTokenSource();
-
+            int ctCancel = 0;
 
         go:
             int localTimer = currentTimer;
@@ -271,50 +270,53 @@ namespace mpad
             while (File.Exists(Data.path) && fiAutoSave.Checked)
             {
             Task1:
-                await Task.Delay(intervalTimer, ct.Token);
+                await Task.Delay(intervalTimer);
                 await Task.Run(() =>
                 {
-                    if (localTimer != currentTimer)
-                    {
-                        totalTimer = 0;
-                        MessageBox.Show("Timer changed.");
-                        ct.Cancel();
-                    }
-
                     totalTimer += intervalTimer;
-                }, ct.Token);
 
-                if (ct.IsCancellationRequested) goto go;
+                    if (localTimer == currentTimer) return;
+                    totalTimer = 0;
+                    ctCancel = 1;
+                });
+
+                if (ctCancel == 1)
+                {
+                   ctCancel = 0;
+                    goto go;
+                }
                 if (File.Exists(Data.path) && fiAutoSave.Checked && totalTimer >= currentTimer)
                 {
                     try
                     {
                         using (StreamWriter sw = new StreamWriter(Data.path)) sw.Write(txtMain.Text);
                         Text = Data.filename + " - " + "mpad";
+                        Data.saved = true;
                         totalTimer = 0;
-                        MessageBox.Show("Saved");
                     }
                     catch
                     {
                     }
                 }
-                else
-                {
-                    goto Task1;
-                }
+                else goto Task1;
+                goto go;
             }
         }
 
         private void ASaveTimer_Click(object sender, EventArgs e)
         {
+            openSetTheme();
+        }
+
+        private void openSetTheme()
+        {
             if (!fiAutoSave.Checked)
             {
-                MessageBox.Show("Auto-save needs to be enabled to set a timer.", "Auto-save disabled",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Auto-save needs to be enabled to set a timer.", "Auto-save disabled", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            SetTimer newTimer = new SetTimer();
+            SetTimer newTimer = new SetTimer { StartPosition = FormStartPosition.CenterParent };
             newTimer.ShowDialog();
         }
 
@@ -323,7 +325,6 @@ namespace mpad
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         private void edUndo_Click(object sender, EventArgs e)
         {
-            txtMain.Undo();
         }
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -392,10 +393,12 @@ namespace mpad
             {
                 case true:
                     foWrap.Checked = false;
+                    impConfig.wrap = false;
                     txtMain.WordWrap = false;
                     break;
                 case false:
                     foWrap.Checked = true;
+                    impConfig.wrap = true;
                     txtMain.WordWrap = true;
                     break;
             }
@@ -408,70 +411,112 @@ namespace mpad
         {
             if (txtMain.Text != "") txtMain.SelectAll();
         }
-        
+
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// ZOOM IN
+        /// ZOOM IN 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        
         private void viZoomIn_Click(object sender, EventArgs e)
         {
-
+            zoomIn();
         }
-        
+
+        private void zoomIn()
+        {
+            if (newZoom < 150) txtMain.Font = new Font(impConfig.font, newZoom += 2);
+        }
+
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// ZOOM OUT
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
         private void viZoomOut_Click(object sender, EventArgs e)
         {
-
+            if (newZoom > 2) txtMain.Font = new Font(impConfig.font, newZoom -= 2);
+            
         }
-        
+
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// RESTORE ZOOM
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
         private void viResZoom_Click(object sender, EventArgs e)
         {
-
+            txtMain.Font = new Font(impConfig.font, impConfig.fontSize);
         }
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// MISC & EXTRAS
+        /// THEMES <3
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        private void EmergencyRecovery()
+        ///
+        private void thLight_Click(object sender, EventArgs e)
         {
-            if (!Directory.Exists(EmergencyPath))
-                Directory.CreateDirectory(EmergencyPath);
+            if (thLight.Checked) return;
+            thLight.Checked = true;
+            thDark.Checked = false;
+            impConfig.theme = "Light";
+            setTheme();
+        }
 
-            string filename = Anti_Overwrite();
+        private void thDark_Click(object sender, EventArgs e)
+        {
+            if (thDark.Checked) return;
+            thDark.Checked = true;
+            thLight.Checked = false;
+            impConfig.theme = "Dark";
+            setTheme();
+        }
 
-            using (StreamWriter sw = new StreamWriter(filename))
+        private void setTheme()
+        {
+            switch (impConfig.theme)
             {
-                sw.Write(txtMain.Text);
+                case "Light":
+                    txtMain.FillColor = Color.White;
+                    txtMain.ForeColor = Color.Black;
+
+                    foreach (Control c in Controls)
+                    {
+
+                        switch (c)
+                        {
+                            case MenuStrip _:
+                                c.ForeColor = Color.Black; c.BackColor = Color.White;
+                                break;
+                            case Guna2TextBox _:
+                                c.ForeColor = Color.Black; c.BackColor = Color.White;
+                                break;
+                            case Label _:
+                                c.ForeColor = Color.Black;
+                                break;
+                            case Form _:
+                                c.BackColor = Color.White; c.ForeColor = Color.Black;
+                                break;
+                        }
+                    }
+                    break;
+                case "Dark":
+                    txtMain.FillColor = Color.FromArgb(30, 30, 30);
+                    txtMain.ForeColor = Color.White;
+
+                    foreach (Control c in Controls)
+                    {
+                        switch (c)
+                        {
+                            case MenuStrip _:
+                                c.ForeColor = Color.White; c.BackColor = Color.FromArgb(45, 45, 48);
+                                break;
+                            case Guna2TextBox _:
+                                c.ForeColor = Color.White; c.BackColor = Color.FromArgb(30, 30, 30);
+                                break;
+                            case Label _:
+                                c.ForeColor = Color.White;
+                                break;
+                            case Form _:
+                                c.ForeColor = Color.White; c.BackColor = Color.DarkGray;
+                                break;
+                        }
+                    }
+                    break;
             }
         }
 
-        private static string Anti_Overwrite()
-        {
-            const string extension = ".txt";
-            int i = 0;
-            string filename = EmergencyPath + @"\Recovered" + extension;
-            string newFileName = "";
-
-            if (!File.Exists($"{filename}{extension}")) return newFileName = $"{filename}{extension}";
-
-            loopWhile:
-            while (File.Exists($"{filename} ({i}){extension}"))
-            {
-                i++;
-                newFileName = $"{filename} ({i}){extension}";
-            }
-
-            if (File.Exists($"{filename} ({i}){extension}")) goto loopWhile;
-
-            return newFileName;
-        }
     }
 }

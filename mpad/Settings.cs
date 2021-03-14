@@ -13,7 +13,7 @@ namespace mpad
             public bool wrap;
             public string font;
             public int saveTimer;
-            public float zoom;
+            public float fontSize;
         }
 
         internal static readonly string configPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\mpad";
@@ -27,7 +27,7 @@ namespace mpad
             impConfig.wrap = json.wrap;
             impConfig.font = json.font;
             impConfig.saveTimer = json.saveTimer;
-            impConfig.zoom = json.zoom;
+            impConfig.fontSize = json.fontSize;
         }
 
         internal static void DeserializeConfig()
@@ -55,10 +55,3 @@ namespace mpad
         }
     }
 }
-
-/*
- * Serialize Idea:
- - Boolean Argument of Default on method SerializeConfig
- - Switch Case if false, get the config of the mpad session and save (usually when exiting)
- - Switch Case if true, serialize the default config for the set config
- */

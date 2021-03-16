@@ -35,7 +35,7 @@ namespace mpad
         internal static void DeserializeConfig()
         {
             string jsonObject = "";
-            
+
             using (FileStream fs = new FileStream(configPath + @"\mpad.json", FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             using (StreamReader sr = new StreamReader(fs, Encoding.Default)) jsonObject = sr.ReadToEnd();
 
@@ -47,7 +47,7 @@ namespace mpad
         internal static void SerializeConfig(mpadJSON currentConfig)
         {
             string exportString = JsonConvert.SerializeObject(currentConfig);
-            
+
             using (FileStream fs = new FileStream(configPath + @"\mpad.json", FileMode.Open, FileAccess.Write, FileShare.ReadWrite))
             using (StreamWriter sw = new StreamWriter(fs, Encoding.Default)) sw.Write(exportString);
         }

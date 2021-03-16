@@ -89,5 +89,12 @@ namespace mpad
             }
 
         }
+
+        internal static void Opened()
+        {
+            using (FileStream fs = new FileStream(Data.path, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (StreamReader sr = new StreamReader(fs))
+                Data.content = sr.ReadToEnd();
+        }
     }
 }

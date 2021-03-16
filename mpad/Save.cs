@@ -1,4 +1,4 @@
-﻿using Guna.UI2.WinForms;
+﻿using Bunifu.UI.WinForms;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -8,7 +8,7 @@ namespace mpad
 {
     public static class Save
     {
-        public static void SaveFunc(Guna2TextBox txtMain, Form frm)
+        public static void SaveFunc(BunifuTextBox txtMain, Form frm)
         {
             switch (Data.saved)
             {
@@ -36,7 +36,7 @@ namespace mpad
             }
         }
 
-        public static void SaveAsFunc(Guna2TextBox txtMain, Form frm)
+        public static void SaveAsFunc(BunifuTextBox txtMain, Form frm)
         {
             Scheduler.Save(txtMain.Text);
             Data.saved = true;

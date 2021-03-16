@@ -1,5 +1,4 @@
 ﻿using Bunifu.UI.WinForms;
-using Guna.UI2.WinForms;
 using System.Drawing;
 using System.Windows.Forms;
 using static mpad.Settings;
@@ -28,10 +27,6 @@ namespace mpad
                                 c.ForeColor = Color.Black;
                                 c.BackColor = Color.White;
                                 break;
-                            case Guna2TextBox _:
-                                c.ForeColor = Color.Black;
-                                c.BackColor = Color.White;
-                                break;
                             case Label _:
                                 c.ForeColor = Color.Black;
                                 break;
@@ -56,10 +51,6 @@ namespace mpad
                                 c.BackColor = Color.FromArgb(45, 45, 48);
                                 break;
                             case BunifuTextBox _:
-                                c.ForeColor = Color.White;
-                                c.BackColor = Color.FromArgb(30, 30, 30);
-                                break;
-                            case Guna2TextBox _:
                                 c.ForeColor = Color.White;
                                 c.BackColor = Color.FromArgb(30, 30, 30);
                                 break;

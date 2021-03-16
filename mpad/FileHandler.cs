@@ -1,11 +1,11 @@
 ﻿using System.IO;
-using Guna.UI2.WinForms;
+using Bunifu.UI.WinForms;
 
 namespace mpad
 {
     public static class FileHandler
     {
-        public static void EmergencyRecovery(Guna2TextBox txtMain, string EmergencyPath)
+        public static void EmergencyRecovery(BunifuTextBox txtMain, string EmergencyPath)
         {
             if (!Directory.Exists(EmergencyPath))
                 Directory.CreateDirectory(EmergencyPath);

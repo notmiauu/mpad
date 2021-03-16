@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using static mpad.FileHandler;
 using static mpad.Keydowns;
 using static mpad.Save;
+using static mpad.Scheduler;
 using static mpad.Settings;
 using static mpad.themeControl;
 using Clipboard = System.Windows.Forms.Clipboard;
@@ -16,11 +17,11 @@ namespace mpad
 {
     public partial class mpadMain : Form
     {
-        private static readonly string EmergencyPath = Settings.configPath + @"\Recovered Files";
+        private static readonly string EmergencyPath = configPath + @"\Recovered Files";
 
         public static int newReturn;
         public static int currentTimer = 30000; //default
-        private static float newZoom = impConfig.fontSize;
+        public static float originalZoom = impConfig.fontSize;
 
         public mpadMain()
         {
@@ -41,34 +42,41 @@ namespace mpad
         {
             BeginInvoke((MethodInvoker)(() =>
             {
-               currentTimer = impConfig.saveTimer;
-               txtMain.WordWrap = impConfig.wrap;
-               foWrap.Checked = impConfig.wrap;
-               txtMain.Font = new Font(impConfig.font, impConfig.fontSize);
+                currentTimer = impConfig.saveTimer;
+                txtMain.WordWrap = impConfig.wrap;
+                foWrap.Checked = impConfig.wrap;
+                txtMain.Font = new Font(impConfig.font, impConfig.fontSize);
 
-               switch (impConfig.theme)
-               {
-                   case "Light":
-                       thLight.Checked = true;
-                       setTheme(txtMain, this);
-                       break;
-                   case "Dark":
-                       thDark.Checked = true;
-                       setTheme(txtMain, this);
-                       break;
-               } 
-           })); //Overwrites default
+                switch (impConfig.theme)
+                {
+                    case "Light":
+                        thLight.Checked = true;
+                        setTheme(txtMain, this);
+                        break;
+                    case "Dark":
+                        thDark.Checked = true;
+                        setTheme(txtMain, this);
+                        break;
+                }
 
-            TopMost = false;
+                TopMost = false;
+                Text = Data.filename + " - " + "mpad";
 
+                string[] args = Environment.GetCommandLineArgs();
+                string x = "";
 
-            //txtMain.HorizontalScroll.Enabled = false;
-            //txtMain.HorizontalScroll.Visible = false;
+                foreach (var i in args) x = i;
 
-            //txtMain.VerticalScroll.Enabled = false;
-            //txtMain.VerticalScroll.Visible = false;
+                if (x.EndsWith(".txt") || x.EndsWith(".json"))
+                {
+                    Data.path = x;
+                    Opened();
+                    txtMain.Text = Data.content;
+                    Text = Data.path.Substring(Data.path.LastIndexOf('\\') + 1) + " - " + "mpad";
+                    Data.saved = true;
+                }
 
-            Text = Data.filename + " - " + "mpad";
+            })); //Overwrites default
         }
 
         private void mpadUnload(object sender, FormClosingEventArgs e)
@@ -79,14 +87,16 @@ namespace mpad
                 Type = 2
             };
 
+            if (impConfig.fontSize != originalZoom) impConfig.fontSize = originalZoom;
+
             mpadJSON session = new mpadJSON
             {
                 id = impConfig.id,
                 theme = impConfig.theme,
                 wrap = impConfig.wrap,
                 font = impConfig.font,
-                saveTimer = impConfig.saveTimer,
-                fontSize = newZoom
+                fontSize = impConfig.fontSize,
+                saveTimer = impConfig.saveTimer
             };
 
             switch (e.CloseReason)
@@ -155,7 +165,6 @@ namespace mpad
             Data.saved = false;
             Data.content = txtMain.Text;
             Text = "* " + Data.filename + " - " + "mpad";
-            txtMain.Font = new Font(impConfig.font, impConfig.fontSize);
         }
 
         private void keyDown(object sender, KeyEventArgs e)
@@ -165,10 +174,12 @@ namespace mpad
             if (open_keyDown()) OpenFunc();
             if (new_keyDown()) newFileFunc();
             if (autoSave_keyDown()) AutoSaveEnable(fiAutoSave, this);
+            /*
             if (find_keyDown())
             {
                 Find f = new Find(); f.Show();
             }
+            */
             if (themeSet_keyDown()) openSetTheme();
             if (zoomIn_keyDown()) zoomIn();
             if (zoomOut_keyDown()) zoomOut();
@@ -196,8 +207,6 @@ namespace mpad
                 Data.path = "";
             }
             else txtMain.Text = string.Empty;
-
-            newReturn = 0;
         }
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -219,7 +228,7 @@ namespace mpad
 
         private void OpenFunc()
         {
-            Scheduler.Open();
+            Open();
             if (Data.content != "") txtMain.Text = Data.content;
             Data.opened = true;
             Text = Data.filename + " - " + "mpad";
@@ -360,7 +369,7 @@ namespace mpad
             };
 
             changeFont.ShowDialog();
-            
+
             //after Dialog
 
             txtMain.Font = new Font(impConfig.font, impConfig.fontSize);
@@ -384,7 +393,7 @@ namespace mpad
 
         private void zoomIn()
         {
-            if (newZoom < 150) txtMain.Font = new Font(impConfig.font, newZoom += 2);
+            if (impConfig.fontSize < 1000) txtMain.Font = new Font(impConfig.font, impConfig.fontSize);
         }
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -397,7 +406,7 @@ namespace mpad
 
         private void zoomOut()
         {
-            if (newZoom > 2) txtMain.Font = new Font(impConfig.font, newZoom -= 2);
+            if (impConfig.fontSize > 2) txtMain.Font = new Font(impConfig.font, impConfig.fontSize -= 2);
         }
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -405,7 +414,7 @@ namespace mpad
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         private void viResZoom_Click(object sender, EventArgs e)
         {
-            txtMain.Font = new Font(impConfig.font, impConfig.fontSize);
+            txtMain.Font = new Font(impConfig.font, originalZoom);
         }
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -431,3 +440,9 @@ namespace mpad
         }
     }
 }
+
+//txtMain.HorizontalScroll.Enabled = false;
+//txtMain.HorizontalScroll.Visible = false;
+
+//txtMain.VerticalScroll.Enabled = false;
+//txtMain.VerticalScroll.Visible = false;

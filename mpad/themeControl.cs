@@ -1,4 +1,5 @@
-﻿using Guna.UI2.WinForms;
+﻿using Bunifu.UI.WinForms;
+using Guna.UI2.WinForms;
 using System.Drawing;
 using System.Windows.Forms;
 using static mpad.Settings;
@@ -7,20 +8,23 @@ namespace mpad
 {
     public class themeControl
     {
-        public static void setTheme(Guna2TextBox txtMain, Form frm)
+        public static void setTheme(BunifuTextBox txtMain, Form frm)
         {
             switch (impConfig.theme)
             {
                 case "Light":
                     txtMain.FillColor = Color.White;
                     txtMain.ForeColor = Color.Black;
-                    txtMain.DisabledState.ForeColor = Color.Black;
 
                     foreach (Control c in frm.Controls)
                     {
                         switch (c)
                         {
                             case MenuStrip _:
+                                c.ForeColor = Color.Black;
+                                c.BackColor = Color.White;
+                                break;
+                            case BunifuTextBox _:
                                 c.ForeColor = Color.Black;
                                 c.BackColor = Color.White;
                                 break;
@@ -42,7 +46,6 @@ namespace mpad
                 case "Dark":
                     txtMain.FillColor = Color.FromArgb(30, 30, 30);
                     txtMain.ForeColor = Color.White;
-                    txtMain.DisabledState.ForeColor = Color.White;
 
                     foreach (Control c in frm.Controls)
                     {
@@ -51,6 +54,10 @@ namespace mpad
                             case MenuStrip _:
                                 c.ForeColor = Color.White;
                                 c.BackColor = Color.FromArgb(45, 45, 48);
+                                break;
+                            case BunifuTextBox _:
+                                c.ForeColor = Color.White;
+                                c.BackColor = Color.FromArgb(30, 30, 30);
                                 break;
                             case Guna2TextBox _:
                                 c.ForeColor = Color.White;

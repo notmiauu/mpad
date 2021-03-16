@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using static mpad.Settings;
-using static mpad.Keydowns;
 
 namespace mpad
 {
@@ -28,27 +27,27 @@ namespace mpad
                 fontSizes = sr.ReadToEnd().Split(',').Select(float.Parse).ToList();
             }
 
-            Invoke((MethodInvoker) (() =>
-            {
-                foreach (FontFamily font in FontFamily.Families)
-                {
-                    cbxFont.Items.Add(font.Name);
-                    if (impConfig.font == font.Name) currentFont = font.Name;
-                }
+            Invoke((MethodInvoker)(() =>
+           {
+               foreach (FontFamily font in FontFamily.Families)
+               {
+                   cbxFont.Items.Add(font.Name);
+                   if (impConfig.font == font.Name) currentFont = font.Name;
+               }
 
-                cbxFont.SelectedItem = currentFont;
+               cbxFont.SelectedItem = currentFont;
 
-                if (fontSizes.Contains(impConfig.fontSize) == false)
-                {
-                    fontSizes.Add(impConfig.fontSize);
-                    fontSizes = fontSizes.OrderBy(i => i).ToList();
-                }
+               if (fontSizes.Contains(impConfig.fontSize) == false)
+               {
+                   fontSizes.Add(impConfig.fontSize);
+                   fontSizes = fontSizes.OrderBy(i => i).ToList();
+               }
 
-                foreach (float i in fontSizes) cbxSize.Items.Add(i);
+               foreach (float i in fontSizes) cbxSize.Items.Add(i);
 
-                cbxSize.AutoCompleteSource = AutoCompleteSource.ListItems;
-                cbxSize.SelectedItem = impConfig.fontSize;
-            }));
+               cbxSize.AutoCompleteSource = AutoCompleteSource.ListItems;
+               cbxSize.SelectedItem = impConfig.fontSize;
+           }));
 
             fontSizes.Clear();
         }
@@ -60,7 +59,8 @@ namespace mpad
             else
             {
                 impConfig.font = cbxFont.SelectedItem.ToString();
-                impConfig.fontSize = (float) Math.Round(float.Parse(cbxSize.Text), 2);
+                impConfig.fontSize = (float)Math.Round(float.Parse(cbxSize.Text), 2);
+                mpadMain.originalZoom = impConfig.fontSize;
                 Close();
             }
         }

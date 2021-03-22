@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using static mpad.mUtils;
 using static mpad.Settings;
 
 namespace mpad
@@ -21,26 +23,24 @@ namespace mpad
                 Directory.CreateDirectory(configPath);
 
                 mpadJSON defaultConfig = new mpadJSON
-                { id = 1, theme = "Light", wrap = true, font = "Segoe UI", saveTimer = 30000, fontSize = 12f };
+                { id = 1, theme = "Light", wrap = true, font = "Arial", saveTimer = 30000, fontSize = 12f, version = latestVer };
+
                 SerializeConfig(defaultConfig);
             }
 
             DeserializeConfig();
 
-            if (!File.Exists(fontSizePath))
-            {
-                File.CreateText(fontSizePath);
-                using (StreamWriter sw = new StreamWriter(fontSizePath))
-                {
-                    sw.Write(
-                        "2, 3, 4, 6, 8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 44, 48, 52, 56, 60, 66, 72, 80, 88, 96, 108, 120, 132, 144, 168");
-                }
-            }
+            if (!File.Exists(fontSizePath)) Task.Run(createFontSizes);
 
+            if (!File.Exists(extensionsPath)) Task.Run(createSupportedExtensions);
+
+            currentVer = impConfig.version;
+            if (currentVer < latestVer) UpdateConfig();
 
             mpadMain newMain = new mpadMain();
             newMain.Activate();
 
+            updateExtensions(false);
             Application.Run(newMain);
         }
     }

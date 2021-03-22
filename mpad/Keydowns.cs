@@ -48,5 +48,10 @@ namespace mpad
         {
             return Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.F) || Keyboard.IsKeyDown(Key.RightCtrl) && Keyboard.IsKeyDown(Key.F);
         }
+
+        public static bool print_keyDown()
+        {
+            return Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.P) || Keyboard.IsKeyDown(Key.RightCtrl) && Keyboard.IsKeyDown(Key.P);
+        }
     }
 }

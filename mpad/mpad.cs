@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Printing;
 using System.IO;
 using System.Windows.Forms;
 using static mpad.FileHandler;
 using static mpad.Keydowns;
+using static mpad.mUtils;
 using static mpad.Save;
 using static mpad.Scheduler;
 using static mpad.Settings;
@@ -22,6 +24,8 @@ namespace mpad
         public static int newReturn;
         public static int currentTimer = 30000; //default
         public static float originalZoom = impConfig.fontSize;
+        
+        readonly PrintDocument pd = new PrintDocument();
 
         public mpadMain()
         {
@@ -41,42 +45,45 @@ namespace mpad
         private void mpadLoad(object sender, EventArgs e)
         {
             BeginInvoke((MethodInvoker)(() =>
-            {
-                currentTimer = impConfig.saveTimer;
-                txtMain.WordWrap = impConfig.wrap;
-                foWrap.Checked = impConfig.wrap;
-                txtMain.Font = new Font(impConfig.font, impConfig.fontSize);
+           {
+               currentTimer = impConfig.saveTimer;
+               txtMain.WordWrap = impConfig.wrap;
+               foWrap.Checked = impConfig.wrap;
+               txtMain.Font = new Font(impConfig.font, impConfig.fontSize);
 
-                switch (impConfig.theme)
-                {
-                    case "Light":
-                        thLight.Checked = true;
-                        setTheme(txtMain, this);
-                        break;
-                    case "Dark":
-                        thDark.Checked = true;
-                        setTheme(txtMain, this);
-                        break;
-                }
+               switch (impConfig.theme)
+               {
+                   case "Light":
+                       thLight.Checked = true;
+                       setTheme(txtMain, this);
+                       break;
+                   case "Dark":
+                       thDark.Checked = true;
+                       setTheme(txtMain, this);
+                       break;
+               }
 
-                TopMost = false;
-                Text = Data.filename + " - " + "mpad";
+               TopMost = false;
+               Text = Data.filename + " - " + "mpad";
 
-                string[] args = Environment.GetCommandLineArgs();
-                string x = "";
+               string[] args = Environment.GetCommandLineArgs();
+               string x = "";
 
-                foreach (var i in args) x = i;
+               foreach (var i in args) x = i;
 
-                if (x.EndsWith(".txt") || x.EndsWith(".json"))
-                {
-                    Data.path = x;
-                    Opened();
-                    txtMain.Text = Data.content;
-                    Text = Data.path.Substring(Data.path.LastIndexOf('\\') + 1) + " - " + "mpad";
-                    Data.saved = true;
-                }
+               if (Data.exts.Contains(x.Substring(x.LastIndexOf('.'))))
+               {
+                   Data.path = x;
+                   Opened();
+                   Data.filename = Data.path.Substring(Data.path.LastIndexOf('\\') + 1);
+                   txtMain.Text = Data.content;
+                   Data.saved = true;
+                   Text = Data.filename + " - " + "mpad";
 
-            })); //Overwrites default
+               }
+
+               updateExtensions(true);
+           })); //Overwrites default
         }
 
         private void mpadUnload(object sender, FormClosingEventArgs e)
@@ -96,7 +103,8 @@ namespace mpad
                 wrap = impConfig.wrap,
                 font = impConfig.font,
                 fontSize = impConfig.fontSize,
-                saveTimer = impConfig.saveTimer
+                saveTimer = impConfig.saveTimer,
+                version = impConfig.version
             };
 
             switch (e.CloseReason)
@@ -122,12 +130,12 @@ namespace mpad
                                 e.Cancel = true;
                             }
                             else SerializeConfig(session);
-
                             newReturn = 0;
                             break;
                         case 2:
                             SerializeConfig(session);
                             e.Cancel = false;
+                            newReturn = 0;
                             break;
                         case 3:
                             e.Cancel = true;
@@ -139,11 +147,8 @@ namespace mpad
                 case CloseReason.WindowsShutDown when Data.path != "":
                     {
                         SerializeConfig(session);
-                        using (StreamWriter sw = new StreamWriter(Data.path))
-                        {
-                            sw.Write(txtMain.Text);
-                        }
-
+                        using (FileStream fs = new FileStream(Data.path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+                            using (StreamWriter sw = new StreamWriter(fs)) sw.Write(txtMain.Text);
                         break;
                     }
                 default:
@@ -161,7 +166,6 @@ namespace mpad
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         private void updateContent(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtMain.Text)) return;
             Data.saved = false;
             Data.content = txtMain.Text;
             Text = "* " + Data.filename + " - " + "mpad";
@@ -174,6 +178,7 @@ namespace mpad
             if (open_keyDown()) OpenFunc();
             if (new_keyDown()) newFileFunc();
             if (autoSave_keyDown()) AutoSaveEnable(fiAutoSave, this);
+            if (print_keyDown()) PrintText(pd);
             /*
             if (find_keyDown())
             {
@@ -360,7 +365,6 @@ namespace mpad
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// FONT
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
         private void foFont_Click(object sender, EventArgs e)
         {
             Fonts changeFont = new Fonts
@@ -420,7 +424,6 @@ namespace mpad
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// THEMES <3
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
         private void thLight_Click(object sender, EventArgs e)
         {
             if (thLight.Checked) return;
@@ -438,6 +441,22 @@ namespace mpad
             impConfig.theme = "Dark";
             setTheme(txtMain, this);
         }
+
+        private void fiPrintSetup_Click(object sender, EventArgs e)
+        {
+            PrintSetup();
+        }
+
+        private void fiPrint_Click(object sender, EventArgs e)
+        {
+            
+            PrintText(pd);
+        }
+
+        public static void document_PrintPage(object sender, PrintPageEventArgs e)
+        {
+            e.Graphics.DrawString(Data.content, new Font(impConfig.font, impConfig.fontSize), Brushes.Black, 20, 20);
+        }
     }
 }
 
@@ -445,4 +464,4 @@ namespace mpad
 //txtMain.HorizontalScroll.Visible = false;
 
 //txtMain.VerticalScroll.Enabled = false;
-//txtMain.VerticalScroll.Visible = false;
+//txtMain.VerticalScroll.Visible = fals7e;

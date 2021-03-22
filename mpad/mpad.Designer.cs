@@ -33,10 +33,10 @@ namespace mpad
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(mpadMain));
-            Bunifu.UI.WinForms.BunifuTextBox.StateProperties stateProperties1 = new Bunifu.UI.WinForms.BunifuTextBox.StateProperties();
-            Bunifu.UI.WinForms.BunifuTextBox.StateProperties stateProperties2 = new Bunifu.UI.WinForms.BunifuTextBox.StateProperties();
-            Bunifu.UI.WinForms.BunifuTextBox.StateProperties stateProperties3 = new Bunifu.UI.WinForms.BunifuTextBox.StateProperties();
-            Bunifu.UI.WinForms.BunifuTextBox.StateProperties stateProperties4 = new Bunifu.UI.WinForms.BunifuTextBox.StateProperties();
+            Bunifu.UI.WinForms.BunifuTextBox.StateProperties stateProperties9 = new Bunifu.UI.WinForms.BunifuTextBox.StateProperties();
+            Bunifu.UI.WinForms.BunifuTextBox.StateProperties stateProperties10 = new Bunifu.UI.WinForms.BunifuTextBox.StateProperties();
+            Bunifu.UI.WinForms.BunifuTextBox.StateProperties stateProperties11 = new Bunifu.UI.WinForms.BunifuTextBox.StateProperties();
+            Bunifu.UI.WinForms.BunifuTextBox.StateProperties stateProperties12 = new Bunifu.UI.WinForms.BunifuTextBox.StateProperties();
             this.mnuOptions = new System.Windows.Forms.MenuStrip();
             this.mnuFile = new System.Windows.Forms.ToolStripMenuItem();
             this.fiNew = new System.Windows.Forms.ToolStripMenuItem();
@@ -80,6 +80,9 @@ namespace mpad
             this.heSeperator1 = new System.Windows.Forms.ToolStripSeparator();
             this.heAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.txtMain = new Bunifu.UI.WinForms.BunifuTextBox();
+            this.fiPrintSetup = new System.Windows.Forms.ToolStripMenuItem();
+            this.fiPrint = new System.Windows.Forms.ToolStripMenuItem();
+            this.fiSeperator4 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuOptions.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -116,6 +119,9 @@ namespace mpad
             this.fiSave,
             this.fiSaveAs,
             this.fiSeperator3,
+            this.fiPrintSetup,
+            this.fiPrint,
+            this.fiSeperator4,
             this.fiAutoSave});
             this.mnuFile.Name = "mnuFile";
             this.mnuFile.Padding = new System.Windows.Forms.Padding(0, 0, 4, 0);
@@ -126,7 +132,7 @@ namespace mpad
             // fiNew
             // 
             this.fiNew.Name = "fiNew";
-            this.fiNew.Size = new System.Drawing.Size(145, 22);
+            this.fiNew.Size = new System.Drawing.Size(180, 22);
             this.fiNew.Text = "New ";
             this.fiNew.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.fiNew.Click += new System.EventHandler(this.fiNew_Click);
@@ -134,7 +140,7 @@ namespace mpad
             // fiNewWindow
             // 
             this.fiNewWindow.Name = "fiNewWindow";
-            this.fiNewWindow.Size = new System.Drawing.Size(145, 22);
+            this.fiNewWindow.Size = new System.Drawing.Size(180, 22);
             this.fiNewWindow.Text = "New Window";
             this.fiNewWindow.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.fiNewWindow.Click += new System.EventHandler(this.fiNewWindow_Click);
@@ -142,12 +148,12 @@ namespace mpad
             // fiSeperator1
             // 
             this.fiSeperator1.Name = "fiSeperator1";
-            this.fiSeperator1.Size = new System.Drawing.Size(142, 6);
+            this.fiSeperator1.Size = new System.Drawing.Size(177, 6);
             // 
             // fiOpen
             // 
             this.fiOpen.Name = "fiOpen";
-            this.fiOpen.Size = new System.Drawing.Size(145, 22);
+            this.fiOpen.Size = new System.Drawing.Size(180, 22);
             this.fiOpen.Text = "Open";
             this.fiOpen.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.fiOpen.Click += new System.EventHandler(this.fiOpen_Click);
@@ -155,12 +161,12 @@ namespace mpad
             // fiSeperator2
             // 
             this.fiSeperator2.Name = "fiSeperator2";
-            this.fiSeperator2.Size = new System.Drawing.Size(142, 6);
+            this.fiSeperator2.Size = new System.Drawing.Size(177, 6);
             // 
             // fiSave
             // 
             this.fiSave.Name = "fiSave";
-            this.fiSave.Size = new System.Drawing.Size(145, 22);
+            this.fiSave.Size = new System.Drawing.Size(180, 22);
             this.fiSave.Text = "Save";
             this.fiSave.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.fiSave.Click += new System.EventHandler(this.fiSave_Click);
@@ -168,7 +174,7 @@ namespace mpad
             // fiSaveAs
             // 
             this.fiSaveAs.Name = "fiSaveAs";
-            this.fiSaveAs.Size = new System.Drawing.Size(145, 22);
+            this.fiSaveAs.Size = new System.Drawing.Size(180, 22);
             this.fiSaveAs.Text = "Save As";
             this.fiSaveAs.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.fiSaveAs.Click += new System.EventHandler(this.fiSaveAs_Click);
@@ -176,14 +182,14 @@ namespace mpad
             // fiSeperator3
             // 
             this.fiSeperator3.Name = "fiSeperator3";
-            this.fiSeperator3.Size = new System.Drawing.Size(142, 6);
+            this.fiSeperator3.Size = new System.Drawing.Size(177, 6);
             // 
             // fiAutoSave
             // 
             this.fiAutoSave.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ASaveTimer});
             this.fiAutoSave.Name = "fiAutoSave";
-            this.fiAutoSave.Size = new System.Drawing.Size(145, 22);
+            this.fiAutoSave.Size = new System.Drawing.Size(180, 22);
             this.fiAutoSave.Text = "Auto-Save";
             this.fiAutoSave.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.fiAutoSave.Click += new System.EventHandler(this.fiAutoSave_Click);
@@ -191,7 +197,7 @@ namespace mpad
             // ASaveTimer
             // 
             this.ASaveTimer.Name = "ASaveTimer";
-            this.ASaveTimer.Size = new System.Drawing.Size(123, 22);
+            this.ASaveTimer.Size = new System.Drawing.Size(180, 22);
             this.ASaveTimer.Text = "Set Timer";
             this.ASaveTimer.Click += new System.EventHandler(this.ASaveTimer_Click);
             // 
@@ -459,26 +465,26 @@ namespace mpad
             this.txtMain.Modified = false;
             this.txtMain.Multiline = true;
             this.txtMain.Name = "txtMain";
-            stateProperties1.BorderColor = System.Drawing.Color.Transparent;
-            stateProperties1.FillColor = System.Drawing.Color.Empty;
-            stateProperties1.ForeColor = System.Drawing.Color.Empty;
-            stateProperties1.PlaceholderForeColor = System.Drawing.Color.Empty;
-            this.txtMain.OnActiveState = stateProperties1;
-            stateProperties2.BorderColor = System.Drawing.Color.Transparent;
-            stateProperties2.FillColor = System.Drawing.Color.Transparent;
-            stateProperties2.ForeColor = System.Drawing.Color.Transparent;
-            stateProperties2.PlaceholderForeColor = System.Drawing.Color.Transparent;
-            this.txtMain.OnDisabledState = stateProperties2;
-            stateProperties3.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(105)))), ((int)(((byte)(181)))), ((int)(((byte)(255)))));
-            stateProperties3.FillColor = System.Drawing.Color.Empty;
-            stateProperties3.ForeColor = System.Drawing.Color.Empty;
-            stateProperties3.PlaceholderForeColor = System.Drawing.Color.Empty;
-            this.txtMain.OnHoverState = stateProperties3;
-            stateProperties4.BorderColor = System.Drawing.Color.Transparent;
-            stateProperties4.FillColor = System.Drawing.Color.Empty;
-            stateProperties4.ForeColor = System.Drawing.Color.Empty;
-            stateProperties4.PlaceholderForeColor = System.Drawing.Color.Empty;
-            this.txtMain.OnIdleState = stateProperties4;
+            stateProperties9.BorderColor = System.Drawing.Color.Transparent;
+            stateProperties9.FillColor = System.Drawing.Color.Empty;
+            stateProperties9.ForeColor = System.Drawing.Color.Empty;
+            stateProperties9.PlaceholderForeColor = System.Drawing.Color.Empty;
+            this.txtMain.OnActiveState = stateProperties9;
+            stateProperties10.BorderColor = System.Drawing.Color.Transparent;
+            stateProperties10.FillColor = System.Drawing.Color.Transparent;
+            stateProperties10.ForeColor = System.Drawing.Color.Transparent;
+            stateProperties10.PlaceholderForeColor = System.Drawing.Color.Transparent;
+            this.txtMain.OnDisabledState = stateProperties10;
+            stateProperties11.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(105)))), ((int)(((byte)(181)))), ((int)(((byte)(255)))));
+            stateProperties11.FillColor = System.Drawing.Color.Empty;
+            stateProperties11.ForeColor = System.Drawing.Color.Empty;
+            stateProperties11.PlaceholderForeColor = System.Drawing.Color.Empty;
+            this.txtMain.OnHoverState = stateProperties11;
+            stateProperties12.BorderColor = System.Drawing.Color.Transparent;
+            stateProperties12.FillColor = System.Drawing.Color.Empty;
+            stateProperties12.ForeColor = System.Drawing.Color.Empty;
+            stateProperties12.PlaceholderForeColor = System.Drawing.Color.Empty;
+            this.txtMain.OnIdleState = stateProperties12;
             this.txtMain.Padding = new System.Windows.Forms.Padding(3);
             this.txtMain.PasswordChar = '\0';
             this.txtMain.PlaceholderForeColor = System.Drawing.Color.Silver;
@@ -501,6 +507,25 @@ namespace mpad
             this.txtMain.WordWrap = true;
             this.txtMain.TextChanged += new System.EventHandler(this.updateContent);
             this.txtMain.KeyDown += new System.Windows.Forms.KeyEventHandler(this.keyDown);
+            // 
+            // fiPrintSetup
+            // 
+            this.fiPrintSetup.Name = "fiPrintSetup";
+            this.fiPrintSetup.Size = new System.Drawing.Size(180, 22);
+            this.fiPrintSetup.Text = "Print Setup";
+            this.fiPrintSetup.Click += new System.EventHandler(this.fiPrintSetup_Click);
+            // 
+            // fiPrint
+            // 
+            this.fiPrint.Name = "fiPrint";
+            this.fiPrint.Size = new System.Drawing.Size(180, 22);
+            this.fiPrint.Text = "Print";
+            this.fiPrint.Click += new System.EventHandler(this.fiPrint_Click);
+            // 
+            // fiSeperator4
+            // 
+            this.fiSeperator4.Name = "fiSeperator4";
+            this.fiSeperator4.Size = new System.Drawing.Size(177, 6);
             // 
             // mpadMain
             // 
@@ -569,6 +594,9 @@ namespace mpad
         private System.Windows.Forms.ToolStripMenuItem fiNewWindow;
         private System.Windows.Forms.ToolStripMenuItem ASaveTimer;
         private Bunifu.UI.WinForms.BunifuTextBox txtMain;
+        private ToolStripMenuItem fiPrintSetup;
+        private ToolStripMenuItem fiPrint;
+        private ToolStripSeparator fiSeperator4;
     }
 }
 

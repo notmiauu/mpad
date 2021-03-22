@@ -10,30 +10,26 @@ namespace mpad
     {
         public static void SaveFunc(BunifuTextBox txtMain, Form frm)
         {
-            switch (Data.saved)
+            if (Data.saved) return;
+            
+            if (Data.path == "" || !File.Exists(Data.path))
             {
-                case false when Data.path == "":
-                case false when !File.Exists(Data.path):
-                    Scheduler.Save(txtMain.Text);
-                    frm.Text = Data.filename + " - " + "mpad";
-                    break;
-                case false when File.Exists(Data.path):
-                    try
-                    {
-                        using (StreamWriter sw = new StreamWriter(Data.path))
-                        {
-                            sw.Write(txtMain.Text);
-                        }
-
-                        frm.Text = Data.filename + " - " + "mpad";
-                    }
-                    catch (Exception)
-                    {
-                        MessageBox.Show("Error saving the file, fix this please Miau.");
-                    }
-
-                    break;
+                Scheduler.Save(txtMain.Text);
+                frm.Text = Data.filename + " - " + "mpad";
             }
+            else if (File.Exists(Data.path))
+                try
+                {
+                    using (StreamWriter sw = new StreamWriter(Data.path, false))
+                    {
+                        sw.Write(txtMain.Text);
+                        Data.saved = true;
+                    }
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Error saving the file, fix this please Miau.");
+                }
         }
 
         public static void SaveAsFunc(BunifuTextBox txtMain, Form frm)
@@ -71,19 +67,19 @@ namespace mpad
             }
         }
 
-        public static async void AutoSaveFunc(Form frm)
+        private static async void AutoSaveFunc(Form frm)
         {
             int totalTimer = 0;
             const int intervalTimer = 30000;
 
             int ctCancel = 0;
 
-        go:
+            go:
             int localTimer = getSaveTimer();
 
             while (File.Exists(Data.path) && getAutoSaveState())
             {
-            Task1:
+                Task1:
                 await Task.Delay(intervalTimer);
                 await Task.Run(() =>
                 {
@@ -104,7 +100,7 @@ namespace mpad
                 {
                     try
                     {
-                        using (StreamWriter sw = new StreamWriter(Data.path)) sw.Write(getText());
+                        using (StreamWriter sw = new StreamWriter(Data.path, false)) sw.Write(getText());
                         frm.Text = Data.filename + " - " + "mpad";
                         Data.saved = true;
                         totalTimer = 0;
